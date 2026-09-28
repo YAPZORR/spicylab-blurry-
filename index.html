@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Generating – Makeitspicy</title>
+<title>Unlock preview – Makeitspicy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,7 +16,6 @@
   --line-2: rgba(255, 150, 60, .28);
   --orange: #ff5e1e;
   --orange-2: #ff983a;
-  --amber: #f67617;
   --gold-text: #ffcf4d;
   --or-grad: linear-gradient(96deg, #ff5e1e 0%, #ff7a26 45%, #ff983a 100%);
   color-scheme: dark;
@@ -51,12 +50,12 @@ svg { display: block; flex: none; }
 /* ---------- Card ---------- */
 .card {
   position: relative; overflow: hidden; isolation: isolate;
-  width: min(24rem, 100%); aspect-ratio: 3 / 5; border-radius: 1.9rem;
+  width: min(24rem, 100%); aspect-ratio: 3 / 4.6; border-radius: 1.9rem;
   display: flex; flex-direction: column;
   animation: in .5s cubic-bezier(.2, .8, .2, 1) both;
 }
 @keyframes in { from { opacity: 0; transform: translateY(1rem) scale(.98); } to { opacity: 1; transform: none; } }
-/* Glowing animated frame, recolored to amber */
+/* Glowing animated frame in amber */
 .card::before {
   content: ""; position: absolute; inset: 0; z-index: 4; border-radius: inherit; padding: 2px; pointer-events: none;
   background: conic-gradient(from var(--a, 0deg), #ff5e1e, #ff983a, #ffb877, #ff5e1e);
@@ -65,120 +64,157 @@ svg { display: block; flex: none; }
 }
 .card::after { content: ""; position: absolute; inset: -2px; z-index: -1; border-radius: inherit; background: linear-gradient(120deg, rgba(255, 94, 30, .55), rgba(255, 152, 58, .45)); filter: blur(22px); opacity: .8; }
 
-/* Blurred backdrop "generation" scene */
-.bg-scene { position: absolute; inset: 0; z-index: -2; filter: blur(30px) saturate(1.2) brightness(.85); transform: scale(1.2);
-  background:
-    radial-gradient(50% 45% at 35% 30%, rgba(255, 160, 90, .55), transparent 60%),
-    radial-gradient(45% 40% at 75% 65%, rgba(230, 90, 30, .5), transparent 60%),
-    linear-gradient(180deg, #3a1608, #24100a 55%, #160a06);
-}
-.grain { position: absolute; inset: 0; z-index: -1; opacity: .06; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.blurwrap { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.blurwrap .scene { position: absolute; inset: 0; filter: blur(30px) saturate(1.2) brightness(.9); transform: scale(1.2); transition: filter .8s ease, transform .8s ease; }
+.veil { position: absolute; inset: 0; z-index: 1; background: radial-gradient(80% 60% at 50% 30%, rgba(255, 120, 40, .1), transparent 60%), linear-gradient(180deg, rgba(12, 6, 2, .35), rgba(12, 6, 2, .55)); transition: background .6s ease; }
 
-/* Glass progress panel */
-.panel {
-  margin: 2.5rem 1.1rem 0; padding: 1.6rem 1.4rem 1.5rem; border-radius: 1.4rem;
-  background: rgba(30, 14, 6, .42);
-  border: 1px solid rgba(255, 150, 70, .28);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
-}
-.row { display: flex; align-items: center; justify-content: space-between; gap: .6rem; flex-wrap: wrap; }
-.title { display: inline-flex; align-items: center; gap: .5rem; min-width: 0; font-size: 1.45rem; font-weight: 800; letter-spacing: -.02em; }
-.title svg { width: 1.45rem; height: 1.45rem; color: var(--orange); }
-.title .dots::after { content: ""; animation: dots 1.4s steps(4, end) infinite; }
-@keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
-.remaining { flex: none; display: flex; align-items: center; gap: .45rem; padding: .5rem .65rem; border-radius: 1rem; background: rgba(40, 20, 8, .55); border: 1px solid var(--line-2); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
-.remaining svg { width: 1.4rem; height: 1.4rem; color: var(--orange-2); }
-.remaining .lbl { font-size: .62rem; color: var(--muted); letter-spacing: .04em; }
-.remaining .val { font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; margin-top: .1rem; }
-.pct { margin: .8rem 0 0; font-size: 4.5rem; line-height: 1; font-weight: 800; letter-spacing: -.05em; font-variant-numeric: tabular-nums;
-  background: linear-gradient(180deg, #fff, #ffd9b8); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.bar { height: .8rem; margin: 1.2rem 0 0; border-radius: 999px; background: rgba(255, 220, 190, .18); overflow: hidden; }
-.bar span { display: block; height: 100%; width: 46%; border-radius: inherit; background: var(--or-grad); box-shadow: 0 0 .8rem rgba(255, 110, 30, .75); transition: width .3s ease; position: relative; }
-.bar span::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent); transform: translateX(-100%); animation: barsheen 1.6s ease-in-out infinite; }
-@keyframes barsheen { to { transform: translateX(100%); } }
-.cap { margin: 1.1rem 0 0; text-align: center; font-size: 1rem; line-height: 1.5; color: var(--text-2); }
+/* CSS-art preview scene (neutral) */
+.scene { background: linear-gradient(180deg, #2a1608 0%, #6a3a12 40%, #b0641e 68%, #f0a850 100%); }
+.scene::before { content: ""; position: absolute; left: 50%; top: 30%; width: 34%; aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, #fff0c8, #ffb765 70%); box-shadow: 0 0 4rem rgba(255, 180, 100, .6); }
+.scene::after { content: ""; position: absolute; left: -10%; right: -10%; bottom: 0; height: 46%; background: linear-gradient(180deg, rgba(40,20,8,.2), #241206); clip-path: polygon(0 46%, 20% 12%, 42% 34%, 62% 6%, 82% 28%, 100% 14%, 100% 100%, 0 100%); }
 
-/* Promo */
-.promo {
-  position: relative; overflow: hidden; margin: auto 1.1rem 1.1rem; padding: 1.3rem 1.2rem 1.2rem; border-radius: 1.4rem; text-align: center;
-  background: var(--or-grad);
-  box-shadow: 0 0 2rem rgba(255, 110, 30, .45), inset 0 1px 0 rgba(255, 255, 255, .3);
-}
-.promo .beam { position: absolute; top: -30%; bottom: -30%; width: 24%; transform: skewX(-16deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent); mix-blend-mode: screen; animation: beam 4s ease-in-out infinite; }
-@keyframes beam { 0% { left: -20%; opacity: 0; } 20% { opacity: .85; } 60% { left: 110%; opacity: .85; } 75%, 100% { left: 110%; opacity: 0; } }
-.promo p { margin: 0 0 .9rem; font-size: .95rem; font-style: italic; font-weight: 500; color: rgba(255, 255, 255, .95); }
-.speed { position: relative; width: 100%; height: 3.4rem; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: #d64f0d; background: #fff; box-shadow: 0 .5rem 1.5rem rgba(60, 20, 0, .35); transition: filter .2s ease, transform .15s ease; }
-.speed:hover { filter: brightness(.98); } .speed:active { transform: scale(.98); }
-.speed svg { width: 1.2rem; height: 1.2rem; }
-
-/* Top bar */
-.top { position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.1rem 0; }
-.chip { height: 2.1rem; padding: 0 1rem; display: inline-flex; align-items: center; gap: .4rem; border-radius: 999px; font-size: .9rem; font-weight: 600; color: #ffe0c2; background: rgba(30, 14, 6, .55); border: 1px solid rgba(255, 150, 70, .55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
-.chip svg { width: 1rem; height: 1rem; color: var(--orange-2); }
-.close { width: 2.4rem; height: 2.4rem; border-radius: 50%; display: grid; place-items: center; background: rgba(20, 8, 4, .5); border: 1px solid rgba(255, 255, 255, .2); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: background-color .2s ease, transform .2s ease; }
+/* Top row */
+.top { position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; padding: 1.1rem; }
+.badge { display: inline-flex; align-items: center; gap: .45rem; height: 2rem; padding: 0 .9rem; border-radius: 999px; font-size: .8rem; font-weight: 700; letter-spacing: .04em; color: #ffe0c2; background: rgba(30, 14, 6, .5); border: 1px solid rgba(255, 150, 60, .55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.badge svg { width: .95rem; height: .95rem; color: var(--orange-2); }
+.close { width: 2.4rem; height: 2.4rem; border-radius: 50%; display: grid; place-items: center; background: rgba(20, 8, 4, .5); border: 1px solid rgba(255, 255, 255, .22); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: background-color .2s ease, transform .2s ease; }
 .close:hover { background: rgba(60, 24, 8, .7); transform: rotate(90deg); }
 .close svg { width: 1.05rem; height: 1.05rem; }
 
-@media (prefers-reduced-motion: no-preference) { .card::before { animation: spin 6s linear infinite; } @keyframes spin { to { --a: 360deg; } } }
+/* Corner thumbnail (neutral scene) */
+.thumb { position: absolute; top: 3.7rem; left: 1.1rem; z-index: 3; width: 5.25rem; height: 6.75rem; border-radius: 1rem; overflow: hidden; border: 2px solid rgba(255, 150, 60, .7); box-shadow: 0 .75rem 1.75rem rgba(0, 0, 0, .5), 0 0 1.4rem rgba(255, 120, 40, .5); }
+.thumb .scene { position: absolute; inset: 0; }
+
+/* Center lock cluster */
+.center { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 0 1.5rem; text-align: center; transition: opacity .4s ease; }
+.eye { position: relative; width: 5rem; height: 5rem; border-radius: 50%; display: grid; place-items: center; background: rgba(24, 12, 4, .45); border: 1px solid rgba(255, 255, 255, .28); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 0 2rem rgba(255, 120, 40, .4); }
+.eye::before { content: ""; position: absolute; inset: -6px; border-radius: 50%; background: conic-gradient(from var(--a, 0deg), transparent, rgba(255, 120, 40, .85), transparent 55%); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px)); }
+.eye svg { width: 2rem; height: 2rem; color: #fff; opacity: .92; }
+.center h2 { margin: 0; font-size: 1.35rem; font-weight: 800; letter-spacing: -.02em; }
+.center p { margin: 0; max-width: 16rem; font-size: .92rem; line-height: 1.5; color: var(--text-2); }
+.perks { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: .25rem; }
+.perk { display: inline-flex; align-items: center; gap: .35rem; height: 1.9rem; padding: 0 .75rem; border-radius: 999px; font-size: .75rem; font-weight: 600; color: #ffe0c2; background: rgba(255, 120, 40, .14); border: 1px solid rgba(255, 150, 60, .4); }
+.perk svg { width: .8rem; height: .8rem; color: #34d17e; }
+
+/* Bottom actions */
+.actions { position: relative; z-index: 3; margin-top: auto; padding: 1.25rem; display: grid; gap: .7rem; }
+.unlock {
+  position: relative; overflow: hidden; height: 3.75rem; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+  font-size: 1.15rem; font-weight: 800; color: #fff;
+  background: var(--or-grad);
+  box-shadow: 0 0 2rem rgba(255, 110, 30, .5), 0 .6rem 1.6rem rgba(200, 70, 10, .3), inset 0 1px 0 rgba(255, 255, 255, .35);
+  transition: filter .2s ease, transform .15s ease;
+}
+.unlock:hover { filter: brightness(1.07); } .unlock:active { transform: scale(.99); }
+.unlock svg.lock { width: 1.2rem; height: 1.2rem; }
+.unlock .cost { display: inline-flex; align-items: center; gap: .3rem; margin-left: .15rem; padding: .28rem .6rem; border-radius: 999px; background: rgba(30, 8, 0, .4); font-size: .98rem; color: var(--gold-text); }
+.unlock .cost .coin { width: 1.15rem; height: 1.15rem; border-radius: 50%; background: radial-gradient(circle at 36% 30%, #fff3a6 0 10%, #ffd83f 34%, #f7ad10 72%, #dc8d00 100%); box-shadow: inset 0 -1px 2px rgba(150, 80, 0, .4); }
+.unlock::after { content: ""; position: absolute; top: 0; bottom: 0; left: -40%; width: 24%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent); transform: skewX(-18deg); animation: sheen 3.2s ease-in-out 1s infinite; }
+@keyframes sheen { 0% { left: -40%; } 45%, 100% { left: 130%; } }
+.subhint { text-align: center; font-size: .78rem; color: var(--muted); }
+.subhint b { color: var(--gold-text); }
+
+/* Unlocked state */
+.card.unlocked .scene { filter: none; transform: none; }
+.card.unlocked .veil { background: linear-gradient(180deg, transparent 45%, rgba(12, 6, 2, .55)); }
+.card.unlocked .center { opacity: 0; pointer-events: none; }
+.card.unlocked .unlock { background: rgba(30, 14, 6, .55); border: 1px solid rgba(255, 150, 60, .5); box-shadow: none; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.card.unlocked .unlock::after { display: none; }
+.card.unlocked .subhint { visibility: hidden; }
+
+/* Coin burst */
+.burst { position: fixed; z-index: 50; pointer-events: none; width: 1rem; height: 1rem; border-radius: 50%; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .card::before, .eye::before { animation: spin 6s linear infinite; }
+  @keyframes spin { to { --a: 360deg; } }
+}
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
-@media (max-width: 420px) { .card { width: 100%; } .pct { font-size: 3.8rem; } .title { font-size: 1.25rem; } .remaining { padding: .4rem .55rem; } .remaining .val { font-size: 1rem; } }
+@media (max-width: 420px) { .card { width: 100%; } .center h2 { font-size: 1.2rem; } }
 </style>
 </head>
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <symbol id="i-spark" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1c.9 6.2 4.8 10.1 11 11-6.2.9-10.1 4.8-11 11-.9-6.2-4.8-10.1-11-11 6.2-.9 10.1-4.8 11-11Z"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></symbol>
-    <symbol id="i-bolt" viewBox="0 0 24 24"><path fill="currentColor" d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
-    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 7v5l3.5 2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.8 2.8M9.4 5.2A9.7 9.7 0 0 1 12 5c6 0 9.5 7 9.5 7a16 16 0 0 1-3.3 4M6.1 6.2A16 16 0 0 0 2.5 12S6 19 12 19a9.6 9.6 0 0 0 4-.86" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1c.9 6.2 4.8 10.1 11 11-6.2.9-10.1 4.8-11 11-.9-6.2-4.8-10.1-11-11 6.2-.9 10.1-4.8 11-11Z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   </defs>
 </svg>
 
-<section class="card" id="card" role="dialog" aria-label="Generating your video">
-  <div class="bg-scene" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
+<section class="card" id="card" role="dialog" aria-label="Locked preview">
+  <div class="blurwrap" aria-hidden="true"><div class="scene"></div></div>
+  <div class="veil" aria-hidden="true"></div>
 
   <div class="top">
-    <span class="chip"><svg viewBox="0 0 24 24"><use href="#i-spark"/></svg>Spicy Ultra</span>
-    <button class="close" type="button" aria-label="Cancel generation"><svg viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
+    <span class="badge"><svg viewBox="0 0 24 24"><use href="#i-spark"/></svg>HD Result</span>
+    <button class="close" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
   </div>
 
-  <div class="panel">
-    <div class="row">
-      <span class="title"><svg viewBox="0 0 24 24"><use href="#i-spark"/></svg>Generating<span class="dots"></span></span>
-      <span class="remaining"><svg viewBox="0 0 24 24"><use href="#i-clock"/></svg><span><span class="lbl">Remaining</span><span class="val" id="remain">1:24</span></span></span>
+  <div class="thumb" aria-hidden="true"><div class="scene"></div></div>
+
+  <div class="center" id="center">
+    <div class="eye" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-eye-off"/></svg></div>
+    <h2>Your result is ready</h2>
+    <p>Preview is locked. Unlock to reveal the full-resolution image and download it.</p>
+    <div class="perks">
+      <span class="perk"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>Full resolution</span>
+      <span class="perk"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg>No watermark</span>
     </div>
-    <div class="pct"><span id="pct">0</span>%</div>
-    <div class="bar" aria-hidden="true"><span id="barFill" style="width:0%"></span></div>
-    <p class="cap">Perfect poses. Lifelike voice. Longer videos.</p>
   </div>
 
-  <div class="promo">
-    <span class="beam" aria-hidden="true"></span>
-    <p>Skip the queue. Get results faster.</p>
-    <button class="speed" type="button" id="speed"><svg viewBox="0 0 24 24"><use href="#i-bolt"/></svg>Speed up</button>
+  <div class="actions">
+    <button class="unlock" type="button" id="unlock">
+      <svg class="lock" viewBox="0 0 24 24"><use href="#i-lock"/></svg>Unlock
+      <span class="cost"><span class="coin" aria-hidden="true"></span>20</span>
+    </button>
+    <p class="subhint">You have <b>935 coins</b> — you'll have 915 left</p>
   </div>
 </section>
 
 <script>
 (() => {
-  const pctEl = document.getElementById('pct'), barFill = document.getElementById('barFill'), remainEl = document.getElementById('remain');
+  const card = document.getElementById('card');
+  const btn = document.getElementById('unlock');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const TOTAL = 84; // 1:24
-  let pct = 0;
-  const fmt = (s) => { const m = Math.floor(s / 60); return m + ':' + String(Math.round(s % 60)).padStart(2, '0'); };
-  function tick() {
-    pct += (reduceMotion ? 6 : 0.35 + Math.random() * 0.5);
-    if (pct >= 100) pct = 0;
-    const p = Math.floor(pct);
-    pctEl.textContent = p; barFill.style.width = p + '%';
-    remainEl.textContent = fmt(Math.max(0, TOTAL * (1 - pct / 100)));
-  }
-  setInterval(tick, reduceMotion ? 400 : 90); tick();
+  let unlocked = false;
 
-  document.getElementById('speed').addEventListener('click', () => { /* ▼ open the faster-model upsell / checkout */ });
+  function coinBurst(el) {
+    if (reduceMotion || typeof Element.prototype.animate !== 'function') return;
+    const r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const cols = ['#ff5e1e', '#ff983a', '#ffd83f', '#ffb877'];
+    for (let i = 0; i < 20; i++) {
+      const s = document.createElement('span');
+      s.className = 'burst'; s.style.background = cols[i % cols.length];
+      s.style.left = (cx - 5) + 'px'; s.style.top = (cy - 5) + 'px';
+      document.body.appendChild(s);
+      const a = (Math.PI * 2 * i) / 20 + Math.random() * .4, d = 70 + Math.random() * 100;
+      s.animate([
+        { transform: 'translate(0,0) scale(.4)', opacity: 1 },
+        { transform: 'translate(' + Math.cos(a) * d + 'px,' + (Math.sin(a) * d - 30) + 'px) scale(1)', opacity: 1, offset: .6 },
+        { transform: 'translate(' + Math.cos(a) * d * 1.1 + 'px,' + (Math.sin(a) * d + 50) + 'px) scale(.7)', opacity: 0 }
+      ], { duration: 850 + Math.random() * 300, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => s.remove();
+    }
+  }
+
+  btn.addEventListener('click', () => {
+    if (!unlocked) {
+      unlocked = true;
+      card.classList.add('unlocked');
+      coinBurst(btn);
+      btn.innerHTML = 'Unlocked ✓';
+      // ▼ Deduct coins and load the full-resolution result here.
+    } else {
+      unlocked = false;
+      card.classList.remove('unlocked');
+      btn.innerHTML = '<svg class="lock" viewBox="0 0 24 24"><use href="#i-lock"/></svg>Unlock <span class="cost"><span class="coin" aria-hidden="true"></span>20</span>';
+    }
+  });
+
   document.querySelector('.close').addEventListener('click', () => { /* wire to your modal close */ });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelector('.close').click(); });
 })();
